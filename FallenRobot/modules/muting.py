@@ -1,6 +1,7 @@
 import html
 from typing import Optional
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram import Bot, Chat, ChatPermissions, ParseMode, Update
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext, CommandHandler
@@ -78,15 +79,26 @@ def mute(update: Update, context: CallbackContext) -> str:
     if reason:
         log += f"\n<b>Reason:</b> {reason}"
 
-    if member.can_send_messages is None or member.can_send_messages:
-        chat_permissions = ChatPermissions(can_send_messages=False)
-        bot.restrict_chat_member(chat.id, user_id, chat_permissions)
-        bot.sendMessage(
-            chat.id,
-            f"Muted <b>{html.escape(member.user.first_name)}</b> with no expiration date!",
-            parse_mode=ParseMode.HTML,
-        )
-        return log
+            # Around line 81-84
+        if member.can_send_messages is None or member.can_send_messages:
+            chat_permissions = ChatPermissions(can_send_messages=False)
+            bot.restrict_chat_member(chat.id, user_id, chat_permissions)
+            
+            # Add keyboard code RIGHT HERE, before the bot.sendMessage
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton(
+                    "⚫ ᴜɴᴍᴜᴛᴇ", callback_data=f"unmute_btn={member.user.id}"
+                )]
+            ])
+
+            # Replace the original bot.sendMessage with this one
+            bot.sendMessage(
+                chat.id,
+                f"Muted <b>{html.escape(member.user.first_name)}</b> with no expiration date!",
+                parse_mode=ParseMode.HTML,
+                reply_markup=keyboard
+            )
+            return log
 
     else:
         message.reply_text("This user is already muted!")
