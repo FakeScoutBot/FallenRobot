@@ -79,19 +79,23 @@ def mute(update: Update, context: CallbackContext) -> str:
     if reason:
         log += f"\n<b>Reason:</b> {reason}"
 
-            # Around line 81-84
-        if member.can_send_messages is None or member.can_send_messages:
-            chat_permissions = ChatPermissions(can_send_messages=False)
+    # Check if user can send messages
+    if member.can_send_messages is None or member.can_send_messages:
+        chat_permissions = ChatPermissions(
+            can_send_messages=False,
+            can_send_media_messages=False,
+            can_send_other_messages=False,
+            can_add_web_page_previews=False
+        )
+        try:
             bot.restrict_chat_member(chat.id, user_id, chat_permissions)
             
-            # Add keyboard code RIGHT HERE, before the bot.sendMessage
             keyboard = InlineKeyboardMarkup([
                 [InlineKeyboardButton(
                     "⚫ ᴜɴᴍᴜᴛᴇ", callback_data=f"unmute_btn={member.user.id}"
                 )]
             ])
 
-            # Replace the original bot.sendMessage with this one
             bot.sendMessage(
                 chat.id,
                 f"Muted <b>{html.escape(member.user.first_name)}</b> with no expiration date!",
@@ -99,11 +103,12 @@ def mute(update: Update, context: CallbackContext) -> str:
                 reply_markup=keyboard
             )
             return log
-
+        except BadRequest as e:
+            message.reply_text(f"Error: {str(e)}")
+            return ""
     else:
         message.reply_text("This user is already muted!")
-
-    return ""
+        return ""
 
 
 @connection_status
