@@ -1,5 +1,6 @@
 import html
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram import ParseMode, Update
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext, CommandHandler, Filters
@@ -107,7 +108,7 @@ def ban(update: Update, context: CallbackContext) -> str:
             message.delete()
             return log
 
-        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
+                # Original code at line 111-118
         reply = (
             f"<code>❕</code><b>ʙᴀɴ ᴇᴠᴇɴᴛ</b>\n"
             f"<code> </code><b>•  ʙᴀɴɴᴇᴅ ʙʏ:</b> {mention_html(user.id, user.first_name)}\n"
@@ -115,7 +116,22 @@ def ban(update: Update, context: CallbackContext) -> str:
         )
         if reason:
             reply += f"\n<code> </code><b>•  ʀᴇᴀsᴏɴ:</b> \n{html.escape(reason)}"
-        bot.sendMessage(chat.id, reply, parse_mode=ParseMode.HTML)
+        bot.sendMessage(chat.id, reply, parse_mode=ParseMode.HTML)  # <-- This line (118)
+
+        # Add the new code RIGHT BEFORE the bot.sendMessage:
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton(
+                "⚫ ᴜɴʙᴀɴ", callback_data=f"unban_btn={member.user.id}"
+            )]
+        ])
+        
+        # Replace the bot.sendMessage with:
+        bot.sendMessage(
+            chat.id, 
+            reply, 
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard
+        )
         return log
 
     except BadRequest as excp:
