@@ -1,5 +1,5 @@
 from FallenRobot import LOAD, LOGGER, NO_LOAD
-
+from FallenRobot.modules import callback_buttons
 
 def __list_all_modules():
     import glob
