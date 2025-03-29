@@ -1,3 +1,4 @@
+import html
 from telegram import Update, ChatPermissions, ParseMode
 from telegram.ext import CallbackContext, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
