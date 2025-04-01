@@ -92,7 +92,7 @@ def mute(update: Update, context: CallbackContext) -> str:
             
             keyboard = InlineKeyboardMarkup([
                 [InlineKeyboardButton(
-                    "⚫ ᴜɴᴍᴜᴛᴇ", callback_data=f"unmute_btn={member.user.id}"
+                    "✨ ᴜɴᴍᴜᴛᴇ ✨", callback_data=f"unmute_btn={member.user.id}"
                 )]
             ])
 
