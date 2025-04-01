@@ -119,7 +119,7 @@ def ban(update: Update, context: CallbackContext) -> str:
 
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton(
-                "⚫ ᴜɴʙᴀɴ", callback_data=f"unban_btn={member.user.id}"
+                "✨ ᴜɴʙᴀɴ ✨", callback_data=f"unban_btn={member.user.id}"
             )]
         ])
         
